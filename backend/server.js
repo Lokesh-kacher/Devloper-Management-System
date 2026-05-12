@@ -12,8 +12,7 @@ app.use(cors())
 //Mongodb connection
 connectDB()
 
-app.use('/api/user',userRouter)
-
+app.use('/api/user/auth', userRouter)
 const port= process.env.PORT || 5000
 
 
