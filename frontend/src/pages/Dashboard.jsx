@@ -11,7 +11,7 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await API.get("/repo/my-repos", {
+      const res = await API.get("/repos", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
