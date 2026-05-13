@@ -116,10 +116,33 @@ const removeCollaborator = async (req, res) => {
   }
 };
 
+// DELETE PROJECT
+const deleteProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Only owner can delete
+    const project = await Project.findOneAndDelete({ _id: id, user: req.user.id });
+    
+    if (!project) {
+      return res.status(404).json({ message: "Project not found or Access Denied" });
+    }
+
+    // Also delete all repositories associated with this project
+    const Repository = require("../models/Repository");
+    await Repository.deleteMany({ projectId: id });
+
+    res.status(200).json({ message: "Project and all its repositories deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createProject,
   getProjects,
   getProjectById,
   addCollaborator,
-  removeCollaborator
+  removeCollaborator,
+  deleteProject
 };
