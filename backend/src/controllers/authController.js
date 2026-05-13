@@ -5,6 +5,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 
+const { sendOTPEmail } = require("../config/mailer");
+
+
 // REGISTER
 const registerUser = async (req, res) => {
 
@@ -74,22 +77,30 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // generate token
-    const token = jwt.sign(
-      {
-        id: user._id
-      },
+    // Generate OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
-      process.env.JWT_SECRET,
+    // Save OTP to user
+    user.otp = otp;
+    user.otpExpires = otpExpires;
+    await user.save();
 
-      {
-        expiresIn: "7d"
-      }
-    );
+    // Send OTP via email
+    try {
+      await sendOTPEmail(user.email, otp);
+    } catch (emailError) {
+      console.warn("Email sending failed, but you can see the OTP below:");
+    }
+
+    // ALWAYS log to console for development testing
+    console.log("-------------------------------");
+    console.log(`TESTING OTP FOR ${user.email}: ${otp}`);
+    console.log("-------------------------------");
 
     res.status(200).json({
-      message: "Login Successful",
-      token
+      message: "OTP sent to your email",
+      email: user.email 
     });
 
   } catch (error) {
@@ -101,7 +112,56 @@ const loginUser = async (req, res) => {
 };
 
 
+// VERIFY OTP
+const verifyOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    // Check if OTP matches and is not expired
+    if (user.otp !== otp || user.otpExpires < Date.now()) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+
+    // Clear OTP fields after successful verification
+    user.otp = undefined;
+    user.otpExpires = undefined;
+    await user.save();
+
+    // generate token
+    const token = jwt.sign(
+      {
+        id: user._id
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d"
+      }
+    );
+
+    res.status(200).json({
+      message: "Login Successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 module.exports = {
   registerUser,
-  loginUser
+  loginUser,
+  verifyOTP
 };
