@@ -50,13 +50,18 @@ const CreateRepoModal = ({ fetchRepos, projectId }) => {
       </button>
 
       {show && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShow(false)}
+          ></div>
 
           <form
             onSubmit={handleCreate}
-            className="bg-white p-8 rounded-3xl w-[450px] shadow-2xl"
+            className="bg-white p-8 rounded-3xl w-full max-w-[450px] shadow-2xl relative z-10"
           >
-            <h2 className="text-3xl font-bold mb-6 text-gray-800">Create Repository</h2>
+            <h2 className="text-3xl font-bold mb-6 text-gray-800 tracking-tight">Create Repository</h2>
 
             <div className="space-y-5">
               <div>
