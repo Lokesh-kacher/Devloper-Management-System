@@ -57,7 +57,7 @@ const CollaboratorsModal = ({ projectId, collaborators, fetchProject }) => {
         <span>👥</span>
         <span>Collaborators</span>
         {collaborators?.length > 0 && (
-          <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-lg text-xs">
+          <span className="bg-secondary/20 text-primary px-2 py-0.5 rounded-lg text-xs">
             {collaborators.length}
           </span>
         )}
@@ -89,7 +89,7 @@ const CollaboratorsModal = ({ projectId, collaborators, fetchProject }) => {
                   <input
                     type="email"
                     placeholder="Enter user email address..."
-                    className="w-full border-2 border-gray-100 p-4 pr-32 rounded-2xl focus:outline-none focus:border-blue-500 transition-all text-gray-700 bg-gray-50 group-hover:bg-white"
+                    className="w-full border-2 border-gray-100 p-4 pr-32 rounded-2xl focus:outline-none focus:border-primary transition-all text-gray-700 bg-gray-50 group-hover:bg-white"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -97,14 +97,14 @@ const CollaboratorsModal = ({ projectId, collaborators, fetchProject }) => {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="absolute right-2 top-2 bottom-2 bg-blue-600 text-white px-6 rounded-xl font-bold hover:bg-blue-700 disabled:bg-gray-300 transition-all shadow-md active:scale-95"
+                    className="absolute right-2 top-2 bottom-2 bg-primary text-white px-6 rounded-xl font-bold hover:opacity-90 disabled:bg-muted transition-all shadow-md active:scale-95"
                   >
                     {loading ? "Adding..." : "Invite"}
                   </button>
                 </div>
                 {message.text && (
                   <p className={`mt-3 text-sm font-medium px-4 py-2 rounded-lg ${
-                    message.type === "success" ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
+                    message.type === "success" ? "bg-accent text-gray-800" : "bg-red-50 text-red-600"
                   }`}>
                     {message.type === "success" ? "✅ " : "⚠️ "} {message.text}
                   </p>
@@ -121,9 +121,9 @@ const CollaboratorsModal = ({ projectId, collaborators, fetchProject }) => {
                     </div>
                   ) : (
                     collaborators?.map((collab) => (
-                      <div key={collab._id} className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-2xl hover:border-blue-100 hover:shadow-sm transition-all group">
+                      <div key={collab._id} className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-2xl hover:border-secondary hover:shadow-sm transition-all group">
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex justify-center items-center text-white font-bold shadow-sm group-hover:scale-110 transition-transform">
+                          <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex justify-center items-center text-white font-bold shadow-sm group-hover:scale-110 transition-transform">
                             {collab.name?.charAt(0).toUpperCase()}
                           </div>
                           <div>

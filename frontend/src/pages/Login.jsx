@@ -144,14 +144,14 @@ const Login = () => {
           <button 
             type="submit" 
             disabled={loading}
-            className={`w-full p-3 rounded-lg font-bold text-white transition-all ${loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg'}`}
+            className={`w-full p-3 rounded-lg font-bold text-white transition-all ${loading ? 'bg-muted' : 'bg-primary hover:opacity-90 shadow-md hover:shadow-lg'}`}
           >
             {loading ? "Processing..." : "Login"}
           </button>
 
           {message.text && (
             <p className={`mt-4 text-center text-sm font-medium p-3 rounded-lg ${
-              message.type === "success" ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
+              message.type === "success" ? "bg-accent text-gray-800" : "bg-red-50 text-red-600"
             }`}>
               {message.text}
             </p>
@@ -159,7 +159,7 @@ const Login = () => {
 
           <p className="mt-6 text-center text-gray-600">
             Don't have an account?
-            <Link to="/register" className="text-blue-600 font-semibold ml-2 hover:underline">
+            <Link to="/register" className="text-primary font-semibold ml-2 hover:underline">
               Register
             </Link>
           </p>
@@ -185,7 +185,7 @@ const Login = () => {
               type="text"
               placeholder="000000"
               maxLength="6"
-              className="w-full border p-4 text-center text-2xl font-bold tracking-[10px] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              className="w-full border p-4 text-center text-2xl font-bold tracking-[10px] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               required
@@ -195,14 +195,14 @@ const Login = () => {
           <button 
             type="submit" 
             disabled={loading}
-            className={`w-full p-3 rounded-lg font-bold text-white transition-all ${loading ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700 shadow-md hover:shadow-lg'}`}
+            className={`w-full p-3 rounded-lg font-bold text-white transition-all ${loading ? 'bg-muted' : 'bg-primary hover:opacity-90 shadow-md hover:shadow-lg'}`}
           >
             {loading ? "Verifying..." : "Verify & Login"}
           </button>
 
           {message.text && (
             <p className={`mt-4 text-center text-sm font-medium p-3 rounded-lg ${
-              message.type === "success" ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
+              message.type === "success" ? "bg-accent text-gray-800" : "bg-red-50 text-red-600"
             }`}>
               {message.text}
             </p>
@@ -234,7 +234,7 @@ const Login = () => {
               type="email"
               name="email"
               placeholder="name@company.com"
-              className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all"
               onChange={handleChange}
               required
             />
@@ -243,14 +243,14 @@ const Login = () => {
           <button 
             type="submit" 
             disabled={loading}
-            className={`w-full p-3 rounded-lg font-bold text-white transition-all ${loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg'}`}
+            className={`w-full p-3 rounded-lg font-bold text-white transition-all ${loading ? 'bg-muted' : 'bg-primary hover:opacity-90 shadow-md hover:shadow-lg'}`}
           >
             {loading ? "Sending..." : "Send Reset Code"}
           </button>
 
           {message.text && (
             <p className={`mt-4 text-center text-sm font-medium p-3 rounded-lg ${
-              message.type === "success" ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
+              message.type === "success" ? "bg-accent text-gray-800" : "bg-red-50 text-red-600"
             }`}>
               {message.text}
             </p>
@@ -282,7 +282,7 @@ const Login = () => {
               type="text"
               placeholder="000000"
               maxLength="6"
-              className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-center font-bold tracking-widest"
+              className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all text-center font-bold tracking-widest"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               required
@@ -294,7 +294,7 @@ const Login = () => {
             <input
               type="password"
               placeholder="••••••••"
-              className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
@@ -304,14 +304,14 @@ const Login = () => {
           <button 
             type="submit" 
             disabled={loading}
-            className={`w-full p-3 rounded-lg font-bold text-white transition-all ${loading ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700 shadow-md hover:shadow-lg'}`}
+            className={`w-full p-3 rounded-lg font-bold text-white transition-all ${loading ? 'bg-muted' : 'bg-primary hover:opacity-90 shadow-md hover:shadow-lg'}`}
           >
             {loading ? "Resetting..." : "Reset Password"}
           </button>
 
           {message.text && (
             <p className={`mt-4 text-center text-sm font-medium p-3 rounded-lg ${
-              message.type === "success" ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
+              message.type === "success" ? "bg-accent text-gray-800" : "bg-red-50 text-red-600"
             }`}>
               {message.text}
             </p>

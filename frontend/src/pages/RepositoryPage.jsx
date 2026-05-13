@@ -166,7 +166,7 @@ const RepositoryPage = () => {
             </div>
             <div className="text-right">
                <span className="text-[10px] font-black text-gray-400 block mb-1 tracking-widest">ACTIVE PORT</span>
-               <span className="text-2xl font-mono font-bold text-blue-600 bg-blue-50 px-5 py-2 rounded-2xl border border-blue-100">
+               <span className="text-2xl font-mono font-bold text-primary bg-secondary/10 px-5 py-2 rounded-2xl border border-secondary/20">
                  {repo?.port || "NONE"}
                </span>
             </div>
@@ -175,13 +175,13 @@ const RepositoryPage = () => {
           <div className="flex space-x-3 mb-8 bg-gray-200/40 p-1.5 rounded-2xl w-fit">
             <button 
               onClick={() => setActiveTab("port")}
-              className={`px-10 py-3 rounded-xl font-bold transition-all ${activeTab === "port" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+              className={`px-10 py-3 rounded-xl font-bold transition-all ${activeTab === "port" ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
             >
               Port No.
             </button>
             <button 
               onClick={() => setActiveTab("env")}
-              className={`px-10 py-3 rounded-xl font-bold transition-all ${activeTab === "env" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+              className={`px-10 py-3 rounded-xl font-bold transition-all ${activeTab === "env" ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
             >
               ENV
             </button>
@@ -200,10 +200,10 @@ const RepositoryPage = () => {
                       value={port}
                       onChange={(e) => setPort(e.target.value)}
                       placeholder="e.g. 3000"
-                      className="w-full border border-gray-100 bg-gray-50 p-5 rounded-[1.5rem] focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none text-2xl font-mono shadow-inner transition-all"
+                      className="w-full border border-gray-100 bg-gray-50 p-5 rounded-[1.5rem] focus:ring-2 focus:ring-primary focus:bg-white outline-none text-2xl font-mono shadow-inner transition-all"
                     />
                   </div>
-                  <button onClick={handleUpdatePort} disabled={saving} className="w-full bg-black text-white p-5 rounded-2xl font-bold hover:bg-gray-800 transition-all shadow-xl shadow-gray-100">
+                  <button onClick={handleUpdatePort} disabled={saving} className="w-full bg-primary text-white p-5 rounded-2xl font-bold hover:opacity-90 transition-all shadow-xl shadow-gray-100">
                     {saving ? "Saving..." : "Save Configuration"}
                   </button>
                 </div>
@@ -216,7 +216,7 @@ const RepositoryPage = () => {
                       <button 
                         key={env}
                         onClick={() => setEnvMode(env)}
-                        className={`px-5 py-2 rounded-xl text-[10px] font-black transition-all border-2 ${envMode === env ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-100" : "border-gray-50 text-gray-400 hover:border-gray-200"}`}
+                        className={`px-5 py-2 rounded-xl text-[10px] font-black transition-all border-2 ${envMode === env ? "bg-primary border-primary text-white shadow-lg shadow-secondary/20" : "border-gray-50 text-gray-400 hover:border-gray-200"}`}
                       >
                         {env.toUpperCase()}
                       </button>
@@ -229,9 +229,9 @@ const RepositoryPage = () => {
                       placeholder="Add Env..."
                       value={newEnvName}
                       onChange={(e) => setNewEnvName(e.target.value)}
-                      className="p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all w-32"
+                      className="p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs outline-none focus:bg-white focus:ring-2 focus:ring-primary transition-all w-32"
                     />
-                    <button onClick={handleCreateEnv} className="bg-blue-600 text-white p-2.5 rounded-xl hover:bg-blue-700 transition-all shadow-sm">➕</button>
+                    <button onClick={handleCreateEnv} className="bg-primary text-white p-2.5 rounded-xl hover:opacity-90 transition-all shadow-sm">➕</button>
                   </div>
                 </div>
 
@@ -247,7 +247,7 @@ const RepositoryPage = () => {
                     value={envText}
                     onChange={(e) => setEnvText(e.target.value)}
                     placeholder={`# Paste your ${envMode} .env content here...`}
-                    className="flex-1 w-full p-8 bg-gray-900 text-green-400 font-mono text-sm rounded-[2rem] border-none outline-none focus:ring-4 focus:ring-blue-500/10 transition-all shadow-inner resize-none min-h-[350px]"
+                    className="flex-1 w-full p-8 bg-gray-900 text-green-400 font-mono text-sm rounded-[2rem] border-none outline-none focus:ring-4 focus:ring-primary/10 transition-all shadow-inner resize-none min-h-[350px]"
                     spellCheck="false"
                   />
                   <div className="absolute top-4 right-4 text-[10px] font-mono text-gray-600 opacity-50">.env editor</div>
@@ -256,7 +256,7 @@ const RepositoryPage = () => {
                 <button 
                   onClick={handleSaveCurrentEnv}
                   disabled={saving}
-                  className="mt-6 w-full bg-blue-600 text-white p-5 rounded-[1.5rem] font-bold hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 flex items-center justify-center space-x-2"
+                  className="mt-6 w-full bg-primary text-white p-5 rounded-[1.5rem] font-bold hover:opacity-90 transition-all shadow-xl shadow-secondary/20 flex items-center justify-center space-x-2"
                 >
                   {saving ? "Saving..." : (
                     <>

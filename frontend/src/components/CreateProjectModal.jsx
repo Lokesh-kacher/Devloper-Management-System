@@ -35,7 +35,7 @@ const CreateProjectModal = ({ fetchProjects }) => {
     <>
       <button
         onClick={() => setShow(true)}
-        className="bg-blue-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition-all shadow-sm"
+        className="bg-primary text-white px-5 py-2.5 rounded-lg font-semibold hover:opacity-90 transition-all shadow-sm"
       >
         + New Project
       </button>
@@ -54,7 +54,7 @@ const CreateProjectModal = ({ fetchProjects }) => {
                   type="text"
                   name="projectName"
                   placeholder="e.g., Ecommerce Web App"
-                  className="w-full border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  className="w-full border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all"
                   onChange={handleChange}
                   value={projectData.projectName}
                   required
@@ -65,14 +65,14 @@ const CreateProjectModal = ({ fetchProjects }) => {
                 <textarea
                   name="description"
                   placeholder="Describe your project goals..."
-                  className="w-full border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none h-32 transition-all"
+                  className="w-full border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-primary outline-none h-32 transition-all"
                   onChange={handleChange}
                   value={projectData.description}
                 />
               </div>
             </div>
             <div className="flex gap-3 mt-8">
-              <button className="flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold hover:bg-blue-700 transition-all">
+              <button className="flex-1 bg-primary text-white p-3 rounded-xl font-bold hover:opacity-90 transition-all">
                 Create Project
               </button>
               <button

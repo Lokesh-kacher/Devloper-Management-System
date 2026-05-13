@@ -60,7 +60,7 @@ const Dashboard = () => {
         <nav className="flex-1 p-4 space-y-2">
           <button
             onClick={() => navigate("/dashboard")}
-            className="flex items-center space-x-3 p-3 w-full bg-blue-50 text-blue-600 rounded-xl transition-all"
+            className="flex items-center space-x-3 p-3 w-full bg-secondary/10 text-primary rounded-xl transition-all"
           >
             <span className="text-lg">🏠</span>
             <span className="font-semibold">Dashboard</span>
@@ -98,9 +98,9 @@ const Dashboard = () => {
                 placeholder="Search projects..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-gray-100 border-2 border-transparent rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-0 outline-none w-72 transition-all"
+                className="pl-10 pr-4 py-2 bg-gray-100 border-2 border-transparent rounded-xl text-sm focus:bg-white focus:border-primary focus:ring-0 outline-none w-72 transition-all"
               />
-              <span className="absolute left-3 top-2.5 text-gray-400 text-sm group-focus-within:text-blue-500 transition-colors">🔍</span>
+              <span className="absolute left-3 top-2.5 text-gray-400 text-sm group-focus-within:text-primary transition-colors">🔍</span>
             </div>
             <CreateProjectModal fetchProjects={fetchProjects} />
           </div>
@@ -117,7 +117,7 @@ const Dashboard = () => {
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="text-blue-600 font-medium hover:underline"
+                className="text-primary font-medium hover:underline"
               >
                 Clear search
               </button>
@@ -126,7 +126,7 @@ const Dashboard = () => {
 
           {loading ? (
             <div className="flex flex-col justify-center items-center h-64 space-y-4">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
               <p className="text-gray-500">Loading projects...</p>
             </div>
           ) : filteredProjects.length === 0 ? (
@@ -146,10 +146,10 @@ const Dashboard = () => {
                 <Link
                   to={`/project/${project._id}`}
                   key={project._id}
-                  className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:border-blue-200 hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden"
+                  className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:border-secondary hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden"
                 >
                   <div className="flex justify-between items-start mb-6">
-                    <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <div className="p-4 bg-secondary/10 text-primary rounded-2xl group-hover:bg-primary group-hover:text-white transition-all">
                       <span className="text-2xl font-bold">
                         {project.projectName.charAt(0).toUpperCase()}
                       </span>
@@ -164,7 +164,7 @@ const Dashboard = () => {
                       <span className="text-xl">🗑️</span>
                     </button>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-primary transition-colors">
                     {project.projectName}
                   </h3>
                   <p className="text-gray-500 text-sm mb-6 line-clamp-2 leading-relaxed">
@@ -175,7 +175,7 @@ const Dashboard = () => {
                       <span className="w-2 h-2 bg-green-400 rounded-full"></span>
                       <span>ACTIVE WORKSPACE</span>
                     </div>
-                    <span className="text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity font-bold text-sm">Open →</span>
+                    <span className="text-primary opacity-0 group-hover:opacity-100 transition-opacity font-bold text-sm">Open →</span>
                   </div>
                 </Link>
               ))}
