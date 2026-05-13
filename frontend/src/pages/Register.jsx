@@ -11,6 +11,9 @@ const Register = () => {
     password: "",
   });
 
+  const [message, setMessage] = useState({ text: "", type: "" });
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -20,15 +23,17 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage({ text: "", type: "" });
 
     try {
       const res = await API.post("/auth/register", formData);
-
-      alert("Registration Successful");
-
-      navigate("/");
+      setMessage({ text: "Registration Successful! Redirecting...", type: "success" });
+      setTimeout(() => navigate("/"), 1500);
     } catch (error) {
-      alert(error.response.data.message);
+      setMessage({ text: error.response?.data?.message || "Registration failed", type: "error" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,9 +71,20 @@ const Register = () => {
           onChange={handleChange}
         />
 
-        <button className="bg-black text-white w-full p-3 rounded">
-          Register
+        <button 
+          disabled={loading}
+          className={`bg-black text-white w-full p-3 rounded font-bold transition-all ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-800'}`}
+        >
+          {loading ? "Registering..." : "Register"}
         </button>
+
+        {message.text && (
+          <p className={`mt-4 text-center text-sm font-medium p-3 rounded-lg ${
+            message.type === "success" ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
+          }`}>
+            {message.text}
+          </p>
+        )}
 
         <p className="mt-4 text-center">
           Already have account?

@@ -31,6 +31,25 @@ const Dashboard = () => {
     project.projectName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleDeleteProject = async (e, projectId) => {
+    e.preventDefault(); // Prevent navigating to the project page
+    e.stopPropagation();
+
+    if (!window.confirm("Are you sure you want to delete this project? All associated repositories will also be deleted!")) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      await API.delete(`/projects/delete/${projectId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchProjects(); // Refresh the list
+    } catch (error) {
+      console.error("Failed to delete project:", error);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar - Interactive */}
@@ -39,21 +58,15 @@ const Dashboard = () => {
           <h1 className="text-xl font-bold text-gray-800 tracking-tight">DEVPM</h1>
         </div>
         <nav className="flex-1 p-4 space-y-2">
-          <button 
+          <button
             onClick={() => navigate("/dashboard")}
             className="flex items-center space-x-3 p-3 w-full bg-blue-50 text-blue-600 rounded-xl transition-all"
           >
             <span className="text-lg">🏠</span>
             <span className="font-semibold">Dashboard</span>
           </button>
-          <button 
-            onClick={() => navigate("/dashboard")}
-            className="flex items-center space-x-3 p-3 w-full text-gray-500 hover:bg-gray-100 rounded-xl transition-colors text-left"
-          >
-            <span className="text-lg">📁</span>
-            <span>Projects</span>
-          </button>
-          <button 
+
+          <button
             className="flex items-center space-x-3 p-3 w-full text-gray-500 hover:bg-gray-100 rounded-xl transition-colors text-left"
           >
             <span className="text-lg">⚙️</span>
@@ -61,7 +74,7 @@ const Dashboard = () => {
           </button>
         </nav>
         <div className="p-4 border-t border-gray-200">
-          <button 
+          <button
             onClick={() => {
               localStorage.removeItem("token");
               navigate("/");
@@ -79,17 +92,17 @@ const Dashboard = () => {
         <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 sticky top-0 z-10">
           <h2 className="text-lg font-semibold text-gray-700">Dashboard</h2>
           <div className="flex items-center space-x-6">
-             <div className="relative group">
-                <input 
-                  type="text" 
-                  placeholder="Search projects..." 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 bg-gray-100 border-2 border-transparent rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-0 outline-none w-72 transition-all"
-                />
-                <span className="absolute left-3 top-2.5 text-gray-400 text-sm group-focus-within:text-blue-500 transition-colors">🔍</span>
-             </div>
-             <CreateProjectModal fetchProjects={fetchProjects} />
+            <div className="relative group">
+              <input
+                type="text"
+                placeholder="Search projects..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 bg-gray-100 border-2 border-transparent rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-0 outline-none w-72 transition-all"
+              />
+              <span className="absolute left-3 top-2.5 text-gray-400 text-sm group-focus-within:text-blue-500 transition-colors">🔍</span>
+            </div>
+            <CreateProjectModal fetchProjects={fetchProjects} />
           </div>
         </header>
 
@@ -102,7 +115,7 @@ const Dashboard = () => {
               <p className="text-gray-500 mt-1">Manage and monitor your project workspaces</p>
             </div>
             {searchQuery && (
-              <button 
+              <button
                 onClick={() => setSearchQuery("")}
                 className="text-blue-600 font-medium hover:underline"
               >
@@ -130,10 +143,10 @@ const Dashboard = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredProjects.map((project) => (
-                <Link 
-                  to={`/project/${project._id}`} 
+                <Link
+                  to={`/project/${project._id}`}
                   key={project._id}
-                  className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:border-blue-200 hover:shadow-xl hover:-translate-y-1 transition-all group"
+                  className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:border-blue-200 hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden"
                 >
                   <div className="flex justify-between items-start mb-6">
                     <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-all">
@@ -141,7 +154,15 @@ const Dashboard = () => {
                         {project.projectName.charAt(0).toUpperCase()}
                       </span>
                     </div>
-                    <div className="text-gray-300 hover:text-gray-600 cursor-pointer p-1">⋮</div>
+
+                    {/* Delete button only for owners */}
+                    <button
+                      onClick={(e) => handleDeleteProject(e, project._id)}
+                      className="text-gray-300 hover:text-red-500 p-2 rounded-lg hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"
+                      title="Delete Project"
+                    >
+                      <span className="text-xl">🗑️</span>
+                    </button>
                   </div>
                   <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
                     {project.projectName}

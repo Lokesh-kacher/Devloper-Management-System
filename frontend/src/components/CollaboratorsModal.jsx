@@ -44,7 +44,7 @@ const CollaboratorsModal = ({ projectId, collaborators, fetchProject }) => {
       );
       fetchProject();
     } catch (error) {
-      alert(error.response?.data?.message || "Failed to remove collaborator");
+      console.error("Failed to remove collaborator:", error);
     }
   };
 
