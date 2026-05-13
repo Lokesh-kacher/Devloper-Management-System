@@ -7,9 +7,12 @@ const repositorySchema = new mongoose.Schema(
       required: true
     },
 
+    description: {
+      type: String
+    },
+
     port: {
-      type: Number,
-      required: true
+      type: Number
     },
 
     projectId: {
@@ -18,15 +21,11 @@ const repositorySchema = new mongoose.Schema(
     },
 
     environments: {
-
-      development: {
-        DB_URL: String,
-        API_KEY: String
-      },
-
-      production: {
-        DB_URL: String,
-        API_KEY: String
+      type: Map,
+      of: String,
+      default: {
+        development: "",
+        production: ""
       }
     }
   },

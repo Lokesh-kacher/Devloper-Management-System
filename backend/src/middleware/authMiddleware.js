@@ -5,15 +5,15 @@ const protect = async (req, res, next) => {
   try {
 
     // get token
-    const token = req.headers.authorization;
+    const authHeader = req.headers.authorization;
 
-    // check token
-    if (!token) {
-
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         message: "No Token, Authorization Denied"
       });
     }
+
+    const token = authHeader.split(" ")[1];
 
     // verify token
     const decoded = jwt.verify(
