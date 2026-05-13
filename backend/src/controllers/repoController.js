@@ -172,11 +172,37 @@ const updatePort = async (req, res) => {
   }
 };
 
+// DELETE REPOSITORY
+const deleteRepo = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const repo = await Repository.findById(id).populate("projectId");
+    if (!repo) {
+      return res.status(404).json({ message: "Repository not found" });
+    }
+
+    // Check permission (Only project owner can delete, or maybe collaborators too? Usually only owner)
+    // For now, let's allow project owner AND collaborators who have access
+    const project = repo.projectId;
+    if (project.user.toString() !== req.user.id && !project.collaborators.includes(req.user.id)) {
+      return res.status(403).json({ message: "Access Denied" });
+    }
+
+    await Repository.findByIdAndDelete(id);
+
+    res.status(200).json({ message: "Repository deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createRepo,
   getRepos,
   getReposByProject,
   getRepoById,
   updatePort,
-  updateEnvironment
+  updateEnvironment,
+  deleteRepo
 };

@@ -5,7 +5,8 @@ const {
   getReposByProject,
   getRepoById,
   updatePort,
-  updateEnvironment
+  updateEnvironment,
+  deleteRepo
 } = require("../controllers/repoController");
 
 const protect = require("../middleware/authMiddleware");
@@ -33,5 +34,7 @@ router.put("/port/:id", protect, updatePort);
 // update environment
 router.put("/env/:id", protect, updateEnvironment);
 
+// delete repository
+router.delete("/:id", protect, deleteRepo);
 
 module.exports = router;
