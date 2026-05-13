@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import API from "../api/axios";
 import CreateRepoModal from "../components/CreateRepoModal";
+import CollaboratorsModal from "../components/CollaboratorsModal";
 
 const ProjectWorkspace = () => {
   const { id } = useParams();
@@ -87,7 +88,14 @@ const ProjectWorkspace = () => {
              <span>/</span>
              <span className="text-gray-600 font-medium">{project?.projectName}</span>
           </div>
-          <CreateRepoModal fetchRepos={fetchWorkspaceData} projectId={id} />
+          <div className="flex items-center space-x-3">
+            <CollaboratorsModal 
+              projectId={id} 
+              collaborators={project?.collaborators} 
+              fetchProject={fetchWorkspaceData} 
+            />
+            <CreateRepoModal fetchRepos={fetchWorkspaceData} projectId={id} />
+          </div>
         </header>
 
         <div className="p-8 max-w-7xl mx-auto w-full">

@@ -1,5 +1,5 @@
 const express = require("express");
-const { createProject, getProjects, getProjectById } = require("../controllers/projectController");
+const { createProject, getProjects, getProjectById, addCollaborator, removeCollaborator } = require("../controllers/projectController");
 const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
@@ -7,5 +7,7 @@ const router = express.Router();
 router.post("/create", protect, createProject);
 router.get("/", protect, getProjects);
 router.get("/:id", protect, getProjectById);
+router.post("/:id/add-collaborator", protect, addCollaborator);
+router.post("/:id/remove-collaborator", protect, removeCollaborator);
 
 module.exports = router;
