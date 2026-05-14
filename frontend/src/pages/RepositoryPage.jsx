@@ -8,11 +8,12 @@ const RepositoryPage = () => {
   const navigate = useNavigate();
   const [repo, setRepo] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("port"); 
-  const [envMode, setEnvMode] = useState("development"); 
+  const [activeTab, setActiveTab] = useState("port");
+  const [envMode, setEnvMode] = useState("development");
   const [port, setPort] = useState("");
   const [saving, setSaving] = useState(false);
-  
+  const [portError, setPortError] = useState("");
+
   const [envText, setEnvText] = useState("");
   const [newEnvName, setNewEnvName] = useState("");
 
@@ -24,7 +25,7 @@ const RepositoryPage = () => {
       });
       setRepo(res.data);
       setPort(res.data.port || "");
-      
+
       const envs = Object.keys(res.data.environments || {});
       const currentEnv = envMode && envs.includes(envMode) ? envMode : envs[0] || "development";
       setEnvMode(currentEnv);
@@ -50,6 +51,7 @@ const RepositoryPage = () => {
   const handleUpdatePort = async () => {
     if (!port) return;
     setSaving(true);
+    setPortError("");
     try {
       const token = localStorage.getItem("token");
       await API.put(`/repos/port/${id}`, { port }, {
@@ -58,6 +60,7 @@ const RepositoryPage = () => {
       fetchRepoData();
     } catch (error) {
       console.error("Error updating port:", error);
+      setPortError(error.response?.data?.message || "Port number already in use");
     } finally {
       setSaving(false);
     }
@@ -83,7 +86,7 @@ const RepositoryPage = () => {
     const name = newEnvName.toLowerCase();
     const updatedEnv = { ...repo.environments };
     if (updatedEnv[name]) return;
-    
+
     updatedEnv[name] = "";
     setNewEnvName("");
     setEnvMode(name);
@@ -124,8 +127,8 @@ const RepositoryPage = () => {
   );
 
   return (
-    <MainLayout 
-      title={repo?.repoName || "Repository"} 
+    <MainLayout
+      title={repo?.repoName || "Repository"}
       breadcrumbs={breadcrumbs}
       actions={topbarActions}
     >
@@ -135,13 +138,13 @@ const RepositoryPage = () => {
       </div>
 
       <div className="flex space-x-1 mb-8 bg-white border border-card-border p-1 rounded-full w-fit shadow-sm">
-        <button 
+        <button
           onClick={() => setActiveTab("port")}
           className={`px-8 py-2 rounded-full text-sm font-bold transition-all ${activeTab === "port" ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-gray-500 hover:text-gray-700"}`}
         >
           Port Configuration
         </button>
-        <button 
+        <button
           onClick={() => setActiveTab("env")}
           className={`px-8 py-2 rounded-full text-sm font-bold transition-all ${activeTab === "env" ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-gray-500 hover:text-gray-700"}`}
         >
@@ -149,37 +152,80 @@ const RepositoryPage = () => {
         </button>
       </div>
 
-      <div className="bg-white p-8 rounded-[24px] border border-card-border shadow-sm min-h-[500px] flex flex-col">
+      <div className="bg-white p-8 rounded-[24px] border border-card-border shadow-sm min-h-[350px] w-[800px] flex flex-col">
         {activeTab === "port" ? (
-          <div className="max-w-md">
-            <h2 className="text-2xl font-bold mb-2 text-gray-900">Port Mapping</h2>
-            <p className="text-gray-500 mb-8 font-medium">Define the port number for this repository.</p>
-            <div className="space-y-6">
+          <>
+            <div className="flex justify-between items-end mb-8">
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 mb-3 tracking-widest uppercase">Internal Port</label>
-                <input 
-                  type="number" 
-                  value={port}
-                  onChange={(e) => setPort(e.target.value)}
-                  placeholder="3000"
-                  className="w-full border border-card-border bg-gray-50 p-4 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none text-3xl font-bold font-mono transition-all text-gray-900"
-                />
+                <h2 className="text-2xl font-bold mb-2 text-gray-900">Port Mapping</h2>
+                <p className="text-gray-500 font-medium text-sm">Define the port number for this repository.</p>
               </div>
-              <button 
-                onClick={handleUpdatePort} 
-                disabled={saving} 
-                className="w-full bg-primary text-white p-4 rounded-xl font-bold hover:shadow-lg hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50"
+              {repo?.port && (
+                <div className="bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100 flex flex-col items-end">
+                  <span className="text-[9px] font-bold text-emerald-500 tracking-[0.2em] uppercase mb-0.5">Live Port</span>
+                  <span className="text-xl font-bold text-emerald-600 font-mono leading-none">{repo.port}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-6">
+              <div className="relative">
+                <div className="flex justify-between items-center mb-3">
+                  <label className="block text-[10px] font-bold text-gray-400 tracking-widest uppercase">Internal Port</label>
+                  {port === repo?.port?.toString() && repo?.port && (
+                    <span className="flex items-center space-x-1 text-[10px] font-bold text-emerald-500 uppercase tracking-widest">
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span>Synchronized</span>
+                    </span>
+                  )}
+                </div>
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={port}
+                    onChange={(e) => setPort(e.target.value)}
+                    placeholder="3000"
+                    className={`w-full border p-4 rounded-xl focus:ring-4 outline-none text-3xl font-bold font-mono transition-all ${port === repo?.port?.toString() && repo?.port
+                      ? "bg-emerald-50/30 border-emerald-200 text-emerald-900 focus:ring-emerald-500/10 focus:border-emerald-500"
+                      : "bg-gray-50 border-card-border text-gray-900 focus:ring-primary/10 focus:border-primary"
+                      }`}
+                  />
+                </div>
+              </div>
+              {portError && (
+                <p className="text-red-500 text-xs font-bold tracking-wide -mt-3">{portError}</p>
+              )}
+              <button
+                onClick={handleUpdatePort}
+                disabled={saving || port === repo?.port?.toString()}
+                className="w-full bg-primary text-white p-4 rounded-xl font-bold hover:shadow-lg hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
               >
-                {saving ? "Updating..." : "Save Port Configuration"}
+                {saving ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                    <span>Updating Port...</span>
+                  </>
+                ) : port === repo?.port?.toString() && repo?.port ? (
+                  <>
+                    <svg className="w-3 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Port Configuration Saved</span>
+                  </>
+                ) : (
+                  <span>Save Port Configuration</span>
+                )}
               </button>
             </div>
-          </div>
+          </>
         ) : (
           <div className="flex-1 flex flex-col">
             <div className="flex items-center justify-between mb-8 pb-6 border-b border-card-border/50">
               <div className="flex flex-wrap gap-2">
                 {Object.keys(repo?.environments || {}).map((env) => (
-                  <button 
+                  <button
                     key={env}
                     onClick={() => setEnvMode(env)}
                     className={`px-4 py-2 rounded-xl text-[10px] font-bold transition-all border-2 ${envMode === env ? "bg-primary border-primary text-white shadow-md shadow-primary/20" : "border-gray-50 text-gray-400 hover:border-gray-200"}`}
@@ -188,10 +234,10 @@ const RepositoryPage = () => {
                   </button>
                 ))}
               </div>
-              
+
               <div className="flex items-center space-x-2">
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder="New Env..."
                   value={newEnvName}
                   onChange={(e) => setNewEnvName(e.target.value)}
@@ -206,20 +252,20 @@ const RepositoryPage = () => {
             </div>
 
             <div className="flex justify-between items-center mb-4">
-               <h2 className="text-lg font-bold uppercase tracking-tight flex items-center space-x-3 text-gray-900">
-                  <span>{envMode} .env</span>
-                  <button 
-                    onClick={handleDeleteEntireEnv} 
-                    className="text-[10px] bg-red-50 text-red-500 px-3 py-1 rounded-full hover:bg-red-500 hover:text-white transition-all font-bold tracking-widest"
-                  >
-                    DELETE
-                  </button>
-               </h2>
-               <span className="text-[10px] font-bold text-gray-400 tracking-widest">ENCRYPTION ACTIVE</span>
+              <h2 className="text-lg font-bold uppercase tracking-tight flex items-center space-x-3 text-gray-900">
+                <span>{envMode} .env</span>
+                <button
+                  onClick={handleDeleteEntireEnv}
+                  className="text-[10px] bg-red-50 text-red-500 px-3 py-1 rounded-full hover:bg-red-500 hover:text-white transition-all font-bold tracking-widest"
+                >
+                  DELETE
+                </button>
+              </h2>
+              <span className="text-[10px] font-bold text-gray-400 tracking-widest">ENCRYPTION ACTIVE</span>
             </div>
 
             <div className="flex-1 flex flex-col relative group">
-              <textarea 
+              <textarea
                 value={envText}
                 onChange={(e) => setEnvText(e.target.value)}
                 placeholder={`# Variables for ${envMode}...`}
@@ -228,7 +274,7 @@ const RepositoryPage = () => {
               />
             </div>
 
-            <button 
+            <button
               onClick={handleSaveCurrentEnv}
               disabled={saving}
               className="mt-6 w-full bg-primary text-white p-4 rounded-xl font-bold hover:shadow-lg hover:shadow-primary/30 transition-all flex items-center justify-center space-x-2 active:scale-95 disabled:opacity-50"
