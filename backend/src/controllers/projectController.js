@@ -123,7 +123,7 @@ const deleteProject = async (req, res) => {
 
     // Only owner can delete
     const project = await Project.findOneAndDelete({ _id: id, user: req.user.id });
-    
+
     if (!project) {
       return res.status(404).json({ message: "Project not found or Access Denied" });
     }
@@ -138,11 +138,41 @@ const deleteProject = async (req, res) => {
   }
 };
 
+// UPDATE PROJECT STATUS
+const updateProjectStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const allowed = ["active", "underdevelopment", "completed"];
+    if (!allowed.includes(status)) {
+      return res.status(400).json({ message: "Invalid status value" });
+    }
+
+    const project = await Project.findOne({
+      _id: id,
+      $or: [{ user: req.user.id }, { collaborators: req.user.id }]
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found or Access Denied" });
+    }
+
+    project.status = status;
+    await project.save();
+
+    res.status(200).json({ message: "Status updated", project });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createProject,
   getProjects,
   getProjectById,
   addCollaborator,
   removeCollaborator,
-  deleteProject
+  deleteProject,
+  updateProjectStatus
 };

@@ -22,7 +22,13 @@ const projectSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
       }
-    ]
+    ],
+
+    status: {
+      type: String,
+      enum: ["active", "underdevelopment", "completed"],
+      default: "active"
+    }
   },
   {
     timestamps: true

@@ -6,6 +6,7 @@ import MainLayout from "../components/MainLayout";
 
 const Dashboard = () => {
   const [projects, setProjects] = useState([]);
+  const [repos, setRepos] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -13,12 +14,14 @@ const Dashboard = () => {
   const fetchProjects = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await API.get("/projects", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setProjects(res.data);
+      const [projRes, repoRes] = await Promise.all([
+        API.get("/projects", { headers: { Authorization: `Bearer ${token}` } }),
+        API.get("/repos", { headers: { Authorization: `Bearer ${token}` } })
+      ]);
+      setProjects(projRes.data);
+      setRepos(repoRes.data);
     } catch (error) {
-      console.error("Error fetching projects:", error);
+      console.error("Error fetching dashboard data:", error);
     } finally {
       setLoading(false);
     }
@@ -28,9 +31,46 @@ const Dashboard = () => {
     fetchProjects();
   }, []);
 
-  const filteredProjects = projects.filter((project) =>
-    project.projectName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const isPortSearch = /^\d+$/.test(searchQuery);
+  
+  const filteredProjects = projects.filter((project) => {
+    if (isPortSearch) {
+      // Find if any repo in this project uses this port
+      return repos.some(repo => 
+        repo.projectId?._id === project._id && 
+        repo.port === parseInt(searchQuery)
+      );
+    }
+    return project.projectName.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  const isPortAvailable = isPortSearch && filteredProjects.length === 0;
+
+
+  const STATUS_CYCLE = ["active", "underdevelopment", "completed"];
+
+  const STATUS_CONFIG = {
+    active:           { label: "Active",           dot: "bg-emerald-400",  text: "text-emerald-600",  bg: "bg-emerald-50" },
+    underdevelopment: { label: "In Development",   dot: "bg-amber-400",   text: "text-amber-600",   bg: "bg-amber-50"   },
+    completed:        { label: "Completed",         dot: "bg-stone-400",   text: "text-stone-600",   bg: "bg-stone-100"  },
+  };
+
+  const handleStatusChange = async (e, projectId, currentStatus) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const nextStatus = STATUS_CYCLE[(STATUS_CYCLE.indexOf(currentStatus) + 1) % STATUS_CYCLE.length];
+    try {
+      const token = localStorage.getItem("token");
+      await API.patch(`/projects/${projectId}/status`, { status: nextStatus }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProjects(prev =>
+        prev.map(p => p._id === projectId ? { ...p, status: nextStatus } : p)
+      );
+    } catch (error) {
+      console.error("Failed to update status:", error);
+    }
+  };
 
   const handleDeleteProject = async (e, projectId) => {
     e.preventDefault();
@@ -63,7 +103,7 @@ const Dashboard = () => {
         </div>
         <input
           type="text"
-          placeholder="Search projects..."
+          placeholder="Search projects or ports..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10 pr-4 py-2 bg-white border border-card-border rounded-full text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none w-64 transition-all"
@@ -86,33 +126,21 @@ const Dashboard = () => {
       title="Dashboard" 
       actions={topbarActions}
     >
-      {/* Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        {[
-          { label: "Total Projects", value: projects.length, note: "+2 this month", color: "text-stone-600" },
-          { label: "Active Nodes", value: "12", note: "All systems operational", color: "text-stone-500" },
-          { label: "Resources", value: "84%", note: "Optimal usage", color: "text-stone-400" },
-        ].map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-[12px] border-[0.5px] border-card-border shadow-sm hover:shadow-md transition-shadow">
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{stat.label}</p>
-            <div className="flex items-end justify-between">
-              <h3 className="text-3xl font-bold text-gray-900">{stat.value}</h3>
-              <p className="text-[11px] font-medium text-gray-500 flex items-center space-x-1">
-                <span className={`w-1.5 h-1.5 rounded-full ${stat.color.replace('text', 'bg')}`}></span>
-                <span>{stat.note}</span>
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
+
 
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-            {searchQuery ? `Results for "${searchQuery}"` : "My Projects"}
+            {isPortSearch 
+              ? `Checking Port: ${searchQuery}` 
+              : searchQuery 
+                ? `Results for "${searchQuery}"` 
+                : "My Projects"}
           </h1>
           <p className="text-gray-500 text-sm font-medium mt-1">
-            You have {filteredProjects.length} active projects in your workspace.
+            {isPortAvailable 
+              ? "This port is free for your next big module."
+              : `You have ${filteredProjects.length} ${isPortSearch ? "project using this port" : "active projects"} in your workspace.`}
           </p>
         </div>
         {searchQuery && (
@@ -130,8 +158,17 @@ const Dashboard = () => {
           <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
           <p className="text-gray-400 font-medium text-sm animate-pulse">Initializing workspace...</p>
         </div>
+      ) : isPortAvailable ? (
+        <div className="flex flex-col items-center justify-center py-20 bg-emerald-50/30 rounded-[24px] border border-dashed border-emerald-200">
+          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4 text-2xl">
+            ⚓
+          </div>
+          <h2 className="text-2xl font-bold text-emerald-800 tracking-tight">Clear to use, captain</h2>
+          <p className="text-emerald-600 mt-2 font-medium">Port {searchQuery} is currently unassigned in your workspace.</p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
           {filteredProjects.map((project, i) => {
             const accent = accents[i % accents.length];
             return (
@@ -168,10 +205,16 @@ const Dashboard = () => {
                   </p>
 
                   <div className="flex items-center justify-between pt-4 border-t border-card-border/50">
-                    <div className="flex items-center space-x-2">
-                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: accent }}></span>
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Active</span>
-                    </div>
+                    <button
+                      onClick={(e) => handleStatusChange(e, project._id, project.status || "active")}
+                      title="Click to change status"
+                      className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all hover:opacity-80 active:scale-95 ${
+                        STATUS_CONFIG[project.status || "active"].bg
+                      } ${STATUS_CONFIG[project.status || "active"].text}`}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${STATUS_CONFIG[project.status || "active"].dot}`}></span>
+                      <span>{STATUS_CONFIG[project.status || "active"].label}</span>
+                    </button>
                     <span className="text-primary font-bold text-xs group-hover:translate-x-1 transition-transform inline-flex items-center">
                       Open <span className="ml-1">→</span>
                     </span>

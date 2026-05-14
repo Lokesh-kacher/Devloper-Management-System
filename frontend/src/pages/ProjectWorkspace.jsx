@@ -106,7 +106,9 @@ const ProjectWorkspace = () => {
           <p className="text-gray-500 mb-8 max-w-sm mx-auto font-medium leading-relaxed">
             Your project doesn't have any module repositories yet. Create one to start managing your configurations.
           </p>
-          <CreateRepoModal fetchRepos={fetchWorkspaceData} projectId={id} />
+          <div className="flex justify-center">
+            <CreateRepoModal fetchRepos={fetchWorkspaceData} projectId={id} />
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
