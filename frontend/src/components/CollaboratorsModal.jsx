@@ -119,7 +119,7 @@ const CollaboratorsModal = ({ projectId, collaborators, fetchProject }) => {
                 collaborators?.map((collab) => (
                   <div key={collab._id} className="flex items-center justify-between p-4 bg-white border border-card-border rounded-2xl hover:border-primary/30 hover:shadow-sm transition-all group">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-primary to-purple-600 rounded-xl flex justify-center items-center text-white font-bold shadow-sm group-hover:scale-105 transition-transform">
+                      <div className="w-10 h-10 bg-gradient-to-br from-stone-700 to-stone-500 rounded-xl flex justify-center items-center text-white font-bold shadow-sm group-hover:scale-105 transition-transform">
                         {collab.name?.charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">

@@ -53,7 +53,7 @@ const ProjectWorkspace = () => {
     }
   };
 
-  const accents = ["#1C6FEB", "#8B5CF6", "#F59E0B", "#10B981", "#EC4899", "#6366F1"];
+  const accents = ["#8C7355", "#9E8272", "#B5905A", "#7A8C72", "#A0826D", "#6B7280"];
 
   if (loading) return (
     <div className="h-screen flex justify-center items-center bg-main-bg">

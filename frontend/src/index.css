@@ -1,11 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #1C6FEB;
-  --color-sidebar-bg: #0F1117;
-  --color-main-bg: #F4F3EF;
-  --color-card-border: #e8e6e0;
-  
+  --color-primary: #2D2D2D;
+  --color-secondary: #6B6B6B;
+  --color-sidebar-bg: #1A1A1A;
+  --color-main-bg: #F5F4F0;
+  --color-card-border: #E2E0D8;
+  --color-accent: #8C7355;
+
   --font-syne: "Times New Roman", Times, serif;
   --font-dm: "Times New Roman", Times, serif;
   --font-tnr: "Times New Roman", Times, serif;

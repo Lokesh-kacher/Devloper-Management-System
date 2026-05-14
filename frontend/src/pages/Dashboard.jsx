@@ -51,7 +51,7 @@ const Dashboard = () => {
     }
   };
 
-  const accents = ["#1C6FEB", "#8B5CF6", "#F59E0B", "#10B981", "#EC4899", "#6366F1"];
+  const accents = ["#8C7355", "#9E8272", "#B5905A", "#7A8C72", "#A0826D", "#6B7280"];
 
   const topbarActions = (
     <>
@@ -89,9 +89,9 @@ const Dashboard = () => {
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         {[
-          { label: "Total Projects", value: projects.length, note: "+2 this month", color: "text-primary" },
-          { label: "Active Nodes", value: "12", note: "All systems operational", color: "text-green-500" },
-          { label: "Resources", value: "84%", note: "Optimal usage", color: "text-amber-500" },
+          { label: "Total Projects", value: projects.length, note: "+2 this month", color: "text-stone-600" },
+          { label: "Active Nodes", value: "12", note: "All systems operational", color: "text-stone-500" },
+          { label: "Resources", value: "84%", note: "Optimal usage", color: "text-stone-400" },
         ].map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-[12px] border-[0.5px] border-card-border shadow-sm hover:shadow-md transition-shadow">
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{stat.label}</p>

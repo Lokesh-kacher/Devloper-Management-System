@@ -8,6 +8,7 @@ import ProjectWorkspace from "./pages/ProjectWorkspace";
 import RepositoryPage from "./pages/RepositoryPage";
 
 import PrivateRoute from "./routes/PrivateRoute";
+import Settings from "./pages/Settings";
 
 const App = () => {
   return (
@@ -33,6 +34,15 @@ const App = () => {
           element={
             <PrivateRoute>
               <ProjectWorkspace />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/settings"
+          element={
+            <PrivateRoute>
+              <Settings />
             </PrivateRoute>
           }
         />
