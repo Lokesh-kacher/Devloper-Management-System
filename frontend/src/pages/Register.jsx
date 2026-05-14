@@ -40,7 +40,7 @@ const Register = () => {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-main-bg font-tnr p-4">
       <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 tracking-tighter">DEVPM</h1>
+        <h1 className="text-4xl font-bold text-gray-900 tracking-tighter">Program Manager</h1>
         <p className="text-[10px] text-gray-400 font-bold tracking-[3px] uppercase mt-1">Workspace Manager</p>
       </div>
 

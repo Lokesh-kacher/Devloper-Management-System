@@ -98,8 +98,8 @@ const Login = () => {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-main-bg font-tnr p-4">
       <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 tracking-tighter">DEVPM</h1>
-        <p className="text-[10px] text-gray-400 font-bold tracking-[3px] uppercase mt-1">Workspace Manager</p>
+        <h1 className="text-4xl font-bold text-gray-900 tracking-tighter">Program Manager</h1>
+        <p className="text-[10px] text-gray-400 font-bold tracking-[3px] uppercase mt-1"></p>
       </div>
 
       <div className="w-full max-w-[420px] bg-white p-10 rounded-[32px] border border-card-border shadow-2xl shadow-primary/5 animate-in fade-in zoom-in-95 duration-500">

@@ -27,8 +27,8 @@ const Sidebar = () => {
   return (
     <aside className="w-[200px] bg-sidebar-bg flex flex-col sticky top-0 h-screen shrink-0 overflow-y-auto custom-scrollbar font-tnr">
       <div className="p-6 mb-4">
-        <h1 className="text-2xl font-bold text-white tracking-tighter">DEVPM</h1>
-        <p className="text-[10px] text-gray-500 font-bold tracking-[2px] uppercase mt-1">Manager</p>
+        <h1 className="text-2xl font-bold text-white tracking-tighter">Welcome Back </h1>
+        <p className="text-[10px] text-gray-500 font-bold tracking-[2px] uppercase mt-1"></p>
       </div>
 
       <nav className="flex-1 px-3 space-y-1">
@@ -37,8 +37,8 @@ const Sidebar = () => {
             key={item.path}
             onClick={() => navigate(item.path)}
             className={`flex items-center space-x-3 px-4 py-2.5 w-full rounded-full transition-all group ${isActive(item.path)
-                ? "bg-primary text-white"
-                : "text-gray-400 hover:text-white hover:bg-white/5"
+              ? "bg-primary text-white"
+              : "text-gray-400 hover:text-white hover:bg-white/5"
               }`}
           >
             <div className={`transition-opacity ${isActive(item.path) ? "opacity-100" : "opacity-60 group-hover:opacity-100"}`}>
@@ -50,7 +50,7 @@ const Sidebar = () => {
       </nav>
 
       <div className="p-4 mt-auto border-t border-white/5 space-y-4">
-        
+
         <button
           onClick={() => {
             localStorage.removeItem("token");
