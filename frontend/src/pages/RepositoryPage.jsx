@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import API from "../api/axios";
+import MainLayout from "../components/MainLayout";
 
 const RepositoryPage = () => {
   const { id } = useParams();
@@ -103,174 +104,148 @@ const RepositoryPage = () => {
   };
 
   if (loading) return (
-    <div className="h-screen flex justify-center items-center bg-gray-50">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    <div className="h-screen flex justify-center items-center bg-main-bg">
+      <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+    </div>
+  );
+
+  const breadcrumbs = [
+    { label: "Projects", link: "/dashboard" },
+    { label: repo?.repoName || "Repository" }
+  ];
+
+  const topbarActions = (
+    <div className="flex items-center space-x-3">
+      <div className="flex flex-col items-end">
+        <span className="text-[10px] font-bold text-gray-400 tracking-widest uppercase">Active Port</span>
+        <span className="text-sm font-bold text-primary font-mono">{repo?.port || "NONE"}</span>
+      </div>
     </div>
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar - Interactive */}
-      <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col sticky top-0 h-screen">
-        <div className="p-6 border-b border-gray-200">
-          <h1 className="text-xl font-bold text-gray-800">DEVPM</h1>
-        </div>
-        <nav className="flex-1 p-4 space-y-2">
-          <button 
-            onClick={() => navigate("/dashboard")}
-            className="flex items-center space-x-3 p-3 w-full text-gray-500 hover:bg-gray-100 rounded-xl transition-all text-left"
-          >
-            <span>🏠</span>
-            <span>Dashboard</span>
-          </button>
-          <button 
-            onClick={() => navigate("/dashboard")}
-            className="flex items-center space-x-3 p-3 w-full text-gray-500 hover:bg-gray-100 rounded-xl transition-all text-left"
-          >
-            <span>📁</span>
-            <span>Projects</span>
-          </button>
-          <button className="flex items-center space-x-3 p-3 w-full text-gray-500 hover:bg-gray-100 rounded-xl transition-all text-left">
-            <span>⚙️</span>
-            <span>Settings</span>
-          </button>
-        </nav>
-        <div className="p-4 border-t border-gray-200">
-          <button 
-            onClick={() => {
-              localStorage.removeItem("token");
-              navigate("/");
-            }}
-            className="flex items-center space-x-3 p-3 w-full text-red-500 hover:bg-red-50 rounded-xl transition-all"
-          >
-            <span>🚪</span>
-            <span>Logout</span>
-          </button>
-        </div>
-      </aside>
+    <MainLayout 
+      title={repo?.repoName || "Repository"} 
+      breadcrumbs={breadcrumbs}
+      actions={topbarActions}
+    >
+      <div className="mb-10">
+        <h1 className="text-4xl font-bold text-gray-900 mb-2 tracking-tight">{repo?.repoName}</h1>
+        <p className="text-gray-500 text-lg font-medium">{repo?.description || "Configure repository settings"}</p>
+      </div>
 
-      <main className="flex-1 flex flex-col">
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 sticky top-0 z-10">
-           <div className="flex items-center space-x-2 text-sm text-gray-400 font-medium">
-             <Link to="/dashboard" className="hover:text-blue-500 transition-colors">Dashboard</Link>
-             <span>/</span>
-             <span className="text-gray-600">{repo?.repoName}</span>
-          </div>
-        </header>
+      <div className="flex space-x-1 mb-8 bg-white border border-card-border p-1 rounded-full w-fit shadow-sm">
+        <button 
+          onClick={() => setActiveTab("port")}
+          className={`px-8 py-2 rounded-full text-sm font-bold transition-all ${activeTab === "port" ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-gray-500 hover:text-gray-700"}`}
+        >
+          Port Configuration
+        </button>
+        <button 
+          onClick={() => setActiveTab("env")}
+          className={`px-8 py-2 rounded-full text-sm font-bold transition-all ${activeTab === "env" ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-gray-500 hover:text-gray-700"}`}
+        >
+          Environment Variables
+        </button>
+      </div>
 
-        <div className="p-8 max-w-5xl mx-auto w-full">
-          <div className="mb-10 flex justify-between items-end">
-            <div>
-              <h1 className="text-4xl font-black text-gray-900 mb-2">{repo?.repoName}</h1>
-              <p className="text-gray-500 text-lg">{repo?.description || "Configure repository settings"}</p>
-            </div>
-            <div className="text-right">
-               <span className="text-[10px] font-black text-gray-400 block mb-1 tracking-widest">ACTIVE PORT</span>
-               <span className="text-2xl font-mono font-bold text-primary bg-secondary/10 px-5 py-2 rounded-2xl border border-secondary/20">
-                 {repo?.port || "NONE"}
-               </span>
-            </div>
-          </div>
-
-          <div className="flex space-x-3 mb-8 bg-gray-200/40 p-1.5 rounded-2xl w-fit">
-            <button 
-              onClick={() => setActiveTab("port")}
-              className={`px-10 py-3 rounded-xl font-bold transition-all ${activeTab === "port" ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
-            >
-              Port No.
-            </button>
-            <button 
-              onClick={() => setActiveTab("env")}
-              className={`px-10 py-3 rounded-xl font-bold transition-all ${activeTab === "env" ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
-            >
-              ENV
-            </button>
-          </div>
-
-          <div className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-gray-100 min-h-[600px] flex flex-col">
-            {activeTab === "port" ? (
-              <div className="max-w-md">
-                <h2 className="text-2xl font-bold mb-2">Port Configuration</h2>
-                <p className="text-gray-500 mb-8 text-sm">Set the internal port where this module will run.</p>
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-xs font-black text-gray-400 mb-3 tracking-widest">LISTENING PORT</label>
-                    <input 
-                      type="number" 
-                      value={port}
-                      onChange={(e) => setPort(e.target.value)}
-                      placeholder="e.g. 3000"
-                      className="w-full border border-gray-100 bg-gray-50 p-5 rounded-[1.5rem] focus:ring-2 focus:ring-primary focus:bg-white outline-none text-2xl font-mono shadow-inner transition-all"
-                    />
-                  </div>
-                  <button onClick={handleUpdatePort} disabled={saving} className="w-full bg-primary text-white p-5 rounded-2xl font-bold hover:opacity-90 transition-all shadow-xl shadow-gray-100">
-                    {saving ? "Saving..." : "Save Configuration"}
-                  </button>
-                </div>
+      <div className="bg-white p-8 rounded-[24px] border border-card-border shadow-sm min-h-[500px] flex flex-col">
+        {activeTab === "port" ? (
+          <div className="max-w-md">
+            <h2 className="text-2xl font-bold mb-2 text-gray-900">Port Mapping</h2>
+            <p className="text-gray-500 mb-8 font-medium">Define the port number for this repository.</p>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-[10px] font-bold text-gray-400 mb-3 tracking-widest uppercase">Internal Port</label>
+                <input 
+                  type="number" 
+                  value={port}
+                  onChange={(e) => setPort(e.target.value)}
+                  placeholder="3000"
+                  className="w-full border border-card-border bg-gray-50 p-4 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none text-3xl font-bold font-mono transition-all text-gray-900"
+                />
               </div>
-            ) : (
-              <div className="flex-1 flex flex-col">
-                <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-50">
-                  <div className="flex flex-wrap gap-2">
-                    {Object.keys(repo?.environments || {}).map((env) => (
-                      <button 
-                        key={env}
-                        onClick={() => setEnvMode(env)}
-                        className={`px-5 py-2 rounded-xl text-[10px] font-black transition-all border-2 ${envMode === env ? "bg-primary border-primary text-white shadow-lg shadow-secondary/20" : "border-gray-50 text-gray-400 hover:border-gray-200"}`}
-                      >
-                        {env.toUpperCase()}
-                      </button>
-                    ))}
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <input 
-                      type="text" 
-                      placeholder="Add Env..."
-                      value={newEnvName}
-                      onChange={(e) => setNewEnvName(e.target.value)}
-                      className="p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs outline-none focus:bg-white focus:ring-2 focus:ring-primary transition-all w-32"
-                    />
-                    <button onClick={handleCreateEnv} className="bg-primary text-white p-2.5 rounded-xl hover:opacity-90 transition-all shadow-sm">➕</button>
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-center mb-4">
-                   <h2 className="text-xl font-bold uppercase tracking-tight flex items-center space-x-3">
-                      <span>{envMode} Variables</span>
-                      <button onClick={handleDeleteEntireEnv} className="text-[10px] bg-red-50 text-red-400 px-2 py-1 rounded-lg hover:bg-red-500 hover:text-white transition-all font-black">DELETE ENV</button>
-                   </h2>
-                </div>
-
-                <div className="flex-1 flex flex-col relative group">
-                  <textarea 
-                    value={envText}
-                    onChange={(e) => setEnvText(e.target.value)}
-                    placeholder={`# Paste your ${envMode} .env content here...`}
-                    className="flex-1 w-full p-8 bg-gray-900 text-green-400 font-mono text-sm rounded-[2rem] border-none outline-none focus:ring-4 focus:ring-primary/10 transition-all shadow-inner resize-none min-h-[350px]"
-                    spellCheck="false"
-                  />
-                  <div className="absolute top-4 right-4 text-[10px] font-mono text-gray-600 opacity-50">.env editor</div>
-                </div>
-
-                <button 
-                  onClick={handleSaveCurrentEnv}
-                  disabled={saving}
-                  className="mt-6 w-full bg-primary text-white p-5 rounded-[1.5rem] font-bold hover:opacity-90 transition-all shadow-xl shadow-secondary/20 flex items-center justify-center space-x-2"
-                >
-                  {saving ? "Saving..." : (
-                    <>
-                      <span>💾</span>
-                      <span>Save Changes</span>
-                    </>
-                  )}
+              <button 
+                onClick={handleUpdatePort} 
+                disabled={saving} 
+                className="w-full bg-primary text-white p-4 rounded-xl font-bold hover:shadow-lg hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50"
+              >
+                {saving ? "Updating..." : "Save Port Configuration"}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex-1 flex flex-col">
+            <div className="flex items-center justify-between mb-8 pb-6 border-b border-card-border/50">
+              <div className="flex flex-wrap gap-2">
+                {Object.keys(repo?.environments || {}).map((env) => (
+                  <button 
+                    key={env}
+                    onClick={() => setEnvMode(env)}
+                    className={`px-4 py-2 rounded-xl text-[10px] font-bold transition-all border-2 ${envMode === env ? "bg-primary border-primary text-white shadow-md shadow-primary/20" : "border-gray-50 text-gray-400 hover:border-gray-200"}`}
+                  >
+                    {env.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <input 
+                  type="text" 
+                  placeholder="New Env..."
+                  value={newEnvName}
+                  onChange={(e) => setNewEnvName(e.target.value)}
+                  className="px-4 py-2 bg-gray-50 border border-card-border rounded-xl text-xs outline-none focus:bg-white focus:ring-2 focus:ring-primary/10 transition-all w-32 font-bold"
+                />
+                <button onClick={handleCreateEnv} className="bg-primary text-white p-2 rounded-xl hover:shadow-md transition-all">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
+                  </svg>
                 </button>
               </div>
-            )}
+            </div>
+
+            <div className="flex justify-between items-center mb-4">
+               <h2 className="text-lg font-bold uppercase tracking-tight flex items-center space-x-3 text-gray-900">
+                  <span>{envMode} .env</span>
+                  <button 
+                    onClick={handleDeleteEntireEnv} 
+                    className="text-[10px] bg-red-50 text-red-500 px-3 py-1 rounded-full hover:bg-red-500 hover:text-white transition-all font-bold tracking-widest"
+                  >
+                    DELETE
+                  </button>
+               </h2>
+               <span className="text-[10px] font-bold text-gray-400 tracking-widest">ENCRYPTION ACTIVE</span>
+            </div>
+
+            <div className="flex-1 flex flex-col relative group">
+              <textarea 
+                value={envText}
+                onChange={(e) => setEnvText(e.target.value)}
+                placeholder={`# Variables for ${envMode}...`}
+                className="flex-1 w-full p-6 bg-[#0F1117] text-green-500 font-mono text-sm rounded-2xl border-none outline-none focus:ring-4 focus:ring-primary/10 transition-all shadow-inner resize-none min-h-[300px]"
+                spellCheck="false"
+              />
+            </div>
+
+            <button 
+              onClick={handleSaveCurrentEnv}
+              disabled={saving}
+              className="mt-6 w-full bg-primary text-white p-4 rounded-xl font-bold hover:shadow-lg hover:shadow-primary/30 transition-all flex items-center justify-center space-x-2 active:scale-95 disabled:opacity-50"
+            >
+              {saving ? "Saving Changes..." : (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                  </svg>
+                  <span>Apply Variables</span>
+                </>
+              )}
+            </button>
           </div>
-        </div>
-      </main>
-    </div>
+        )}
+      </div>
+    </MainLayout>
   );
 };
 

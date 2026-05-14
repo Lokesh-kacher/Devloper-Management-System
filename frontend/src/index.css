@@ -1,17 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #2563eb;
-  --color-secondary: #3b82f6;
-  --color-accent: #dbeafe;
-  --color-muted: #f3f4f6;
+  --color-primary: #1C6FEB;
+  --color-sidebar-bg: #0F1117;
+  --color-main-bg: #F4F3EF;
+  --color-card-border: #e8e6e0;
   
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-syne: "Times New Roman", Times, serif;
+  --font-dm: "Times New Roman", Times, serif;
+  --font-tnr: "Times New Roman", Times, serif;
 }
 
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-main-bg text-gray-900 font-tnr;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-tnr font-bold;
   }
 }
 
