@@ -1,5 +1,26 @@
 const Repository = require("../models/Repository");
 const Project = require("../models/Project");
+const { encrypt, decrypt } = require("../utils/encryption");
+
+const decryptRepo = (repo) => {
+  if (!repo) return null;
+  const repoObj = repo.toObject ? repo.toObject() : repo;
+  if (repoObj.environments) {
+    // If it's a Map (from Mongoose), it might be an Object in toObject()
+    // or still a Map depending on options.
+    const environments = repoObj.environments;
+    const decryptedEnvironments = {};
+    
+    // Handle both Map and Object
+    const entries = environments instanceof Map ? environments.entries() : Object.entries(environments);
+    
+    for (const [key, value] of entries) {
+      decryptedEnvironments[key] = decrypt(value);
+    }
+    repoObj.environments = decryptedEnvironments;
+  }
+  return repoObj;
+};
 
 // CREATE REPOSITORY
 const createRepo = async (req, res) => {
@@ -21,7 +42,8 @@ const createRepo = async (req, res) => {
 
     // check duplicate port
     if (port) {
-      const existingPort = await Repository.findOne({ port });
+      const portNum = Number(port);
+      const existingPort = await Repository.findOne({ port: portNum });
       if (existingPort) {
         return res.status(400).json({ message: "Port Already In Use" });
       }
@@ -60,7 +82,9 @@ const getRepos = async (req, res) => {
     const repos = await Repository.find({ projectId: { $in: projectIds } })
       .populate("projectId");
 
-    res.status(200).json(repos);
+    const decryptedRepos = repos.map(repo => decryptRepo(repo));
+
+    res.status(200).json(decryptedRepos);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -83,12 +107,18 @@ const updateEnvironment = async (req, res) => {
       return res.status(403).json({ message: "Access Denied" });
     }
 
-    repo.environments = environments;
+    // Encrypt each environment value before saving
+    const encryptedEnvironments = {};
+    for (const [key, value] of Object.entries(environments)) {
+      encryptedEnvironments[key] = encrypt(value);
+    }
+
+    repo.environments = encryptedEnvironments;
     await repo.save();
 
     res.status(200).json({
       message: "Environment Updated",
-      repo
+      repo: decryptRepo(repo)
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -114,7 +144,8 @@ const getReposByProject = async (req, res) => {
     }
 
     const repos = await Repository.find({ projectId });
-    res.status(200).json(repos);
+    const decryptedRepos = repos.map(repo => decryptRepo(repo));
+    res.status(200).json(decryptedRepos);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -134,7 +165,7 @@ const getRepoById = async (req, res) => {
       return res.status(403).json({ message: "Access Denied" });
     }
 
-    res.status(200).json(repo);
+    res.status(200).json(decryptRepo(repo));
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -158,15 +189,19 @@ const updatePort = async (req, res) => {
     }
 
     // 1. Validate if port is taken by ANOTHER repo
-    const existingRepo = await Repository.findOne({ port, _id: { $ne: id } });
+    const portNum = Number(port);
+    const existingRepo = await Repository.findOne({
+      port: portNum,
+      _id: { $ne: new (require("mongoose").Types.ObjectId)(id) }
+    });
     if (existingRepo) {
       return res.status(400).json({ message: "Port is already in use by another repository" });
     }
 
-    repo.port = port;
+    repo.port = portNum;
     await repo.save();
     
-    res.status(200).json({ message: "Port updated successfully", repo });
+    res.status(200).json({ message: "Port updated successfully", repo: decryptRepo(repo) });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
